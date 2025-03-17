@@ -18,7 +18,7 @@ body {
     background-color: var(--background);
     color: var(--text);
     margin: 0;
-    padding: 0;
+    padding: 10px;
     line-height: 1.6;
 }
 
@@ -43,10 +43,11 @@ header p {
 
 .sound-board {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-    padding: 20px;
-    max-width: 1200px;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 3px;
+    padding: 5px;
+    width: 100%;
+    max-width: 100%;
     margin: 0 auto;
 }
 
@@ -73,35 +74,143 @@ header p {
 .sound-button {
     background-color: var(--button-bg);
     border: none;
-    border-radius: 10px;
+    border-radius: 6px;
     color: var(--text);
     cursor: pointer;
     display: inline-block;
-    font-size: 1rem;
-    margin: 8px;
-    padding: 12px 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+    margin: 2px;
+    padding: 8px;
     text-align: center;
     transition: background-color 0.3s ease, transform 0.2s ease;
     width: 100%;
+    min-height: 44px; /* minimum touch target size */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* Dynamic row colors - each row will get a unique color regardless of count */
+.sound-button {
+    /* Base button styles remain the same */
+    background-color: var(--button-bg);
+}
+
+/* Remove existing row color rules and replace with data-attribute based colors */
+.sound-button[data-color-index="1"] { background-color: #404B69; }  /* Navy */
+.sound-button[data-color-index="2"] { background-color: #614B44; }  /* Brown */
+.sound-button[data-color-index="3"] { background-color: #485C46; }  /* Forest */
+.sound-button[data-color-index="4"] { background-color: #5D4B56; }  /* Burgundy */
+.sound-button[data-color-index="5"] { background-color: #4A4A5E; }  /* Slate */
+.sound-button[data-color-index="6"] { background-color: #594F4F; }  /* Charcoal */
+.sound-button[data-color-index="7"] { background-color: #4B5D5D; }  /* Dark Teal */
+.sound-button[data-color-index="8"] { background-color: #525248; }  /* Olive */
+.sound-button[data-color-index="9"] { background-color: #445566; }  /* Steel */
+.sound-button[data-color-index="10"] { background-color: #5B4B44; } /* Coffee */
+.sound-button[data-color-index="11"] { background-color: #464B5C; } /* Navy Grey */
+.sound-button[data-color-index="12"] { background-color: #4E4E3E; } /* Dark Moss */
+.sound-button[data-color-index="13"] { background-color: #3D4B54; } /* Dark Blue Grey */
+.sound-button[data-color-index="14"] { background-color: #565656; } /* Grey */
+.sound-button[data-color-index="15"] { background-color: #4F4F57; } /* Dark Slate */
+.sound-button[data-color-index="16"] { background-color: #3F4E4E; } /* Pine */
+.sound-button[data-color-index="17"] { background-color: #544D44; } /* Dark Brown */
+.sound-button[data-color-index="18"] { background-color: #4D4D3E; } /* Dark Olive */
+.sound-button[data-color-index="19"] { background-color: #4A5248; } /* Forest Grey */
+.sound-button[data-color-index="20"] { background-color: #4B4B58; } /* Dark Blue */
+.sound-button[data-color-index="21"] { background-color: #52433F; } /* Dark Red */
+.sound-button[data-color-index="22"] { background-color: #3E4147; } /* Gunmetal */
+.sound-button[data-color-index="23"] { background-color: #4D5957; } /* Dark Sage */
+.sound-button[data-color-index="24"] { background-color: #5B5144; } /* Dark Tan */
+
 .sound-button:hover {
-    background-color: var(--button-hover);
-    transform: scale(1.05);
+    background-color: #4ECDC4 !important;
+    transform: scale(1.02);
+    color: #000;
+    text-shadow: none;
 }
 
 .sound-button:active {
-    transform: scale(0.95);
+    transform: scale(0.98);
 }
 
+.sound-button.dragging {
+    opacity: 0.5;
+    cursor: move;
+}
+
+.sound-button.drag-over {
+    border: 2px dashed #4ECDC4;
+}
+
+.controls {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--background);
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+#searchInput {
+    flex: 1;
+    padding: 8px;
+    border: 2px solid #333;
+    border-radius: 6px;
+    background: #222;
+    color: white;
+    font-size: 1rem;
+}
+
+.category-filter {
+    padding: 8px;
+    border: 2px solid #333;
+    border-radius: 6px;
+    background: #222;
+    color: white;
+    font-size: 1rem;
+    min-width: 150px;
+}
+
+.stop-button {
+    padding: 8px 16px;
+    background: #d63031;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.stop-button:hover {
+    background: #ff4d4d;
+}
+
+/* Mobile optimization */
 @media (max-width: 768px) {
     .sound-board {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 2px;
+        padding: 3px;
     }
 
     .sound-button {
-        padding: 10px 15px;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
+        padding: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sound-board {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 1px;
+        padding: 2px;
+    }
+
+    .sound-button {
+        font-size: 0.75rem;
+        padding: 6px;
     }
 }
