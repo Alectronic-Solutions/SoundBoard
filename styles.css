@@ -43,7 +43,7 @@ header p {
 
 .sound-board {
     display: grid;
-    grid-template-columns: repeat(9, 1fr);
+    grid-template-columns: repeat(6, 1fr); /* 6 buttons per row */
     gap: 3px;
     padding: 5px;
     width: 100%;
@@ -75,19 +75,20 @@ header p {
     background-color: var(--button-bg);
     border: none;
     border-radius: 6px;
-    color: var(--text);
+    color: #FFFFFF; /* Ensure high contrast text */
+    font-size: 1rem; /* Slightly larger font size for readability */
+    font-weight: 700; /* Bold text for emphasis */
+    text-transform: uppercase; /* Make text easier to scan quickly */
+    letter-spacing: 0.5px; /* Slightly increase spacing for clarity */
     cursor: pointer;
     display: inline-block;
-    font-size: 0.85rem;
-    font-weight: 500;
-    letter-spacing: 0.3px;
-    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add subtle shadow for better contrast */
     margin: 2px;
-    padding: 8px;
+    padding: 10px; /* Increase padding for better touch targets */
     text-align: center;
     transition: background-color 0.3s ease, transform 0.2s ease;
     width: 100%;
-    min-height: 44px; /* minimum touch target size */
+    min-height: 50px; /* Ensure buttons are large enough for readability */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -123,10 +124,20 @@ header p {
 .sound-button[data-color-index="23"] { background-color: #4D5957; } /* Dark Sage */
 .sound-button[data-color-index="24"] { background-color: #5B5144; } /* Dark Tan */
 
+/* Define updated fun but muted colors for sound buttons */
+.sound-button.color-1 { background-color: #6A5ACD; } /* Slate Blue */
+.sound-button.color-2 { background-color: #4682B4; } /* Steel Blue */
+.sound-button.color-3 { background-color: #556B2F; } /* Dark Olive Green */
+.sound-button.color-4 { background-color: #8B4513; } /* Saddle Brown */
+.sound-button.color-5 { background-color: #2F4F4F; } /* Dark Slate Gray */
+.sound-button.color-6 { background-color: #708090; } /* Slate Gray */
+.sound-button.color-7 { background-color: #5F9EA0; } /* Cadet Blue */
+.sound-button.color-8 { background-color: #6B8E23; } /* Olive Drab */
+
 .sound-button:hover {
-    background-color: #4ECDC4 !important;
+    background-color: #2E2E2E !important; /* Dark grey for hover */
     transform: scale(1.02);
-    color: #000;
+    color: #FFFFFF;
     text-shadow: none;
 }
 
@@ -186,6 +197,78 @@ header p {
 
 .stop-button:hover {
     background: #ff4d4d;
+}
+
+.audio-slider {
+    width: 100%;
+    margin-top: 5px;
+    appearance: none;
+    height: 5px;
+    background: #444;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+}
+
+.audio-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    background: #FFF;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.audio-slider::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    background: #FFF;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.playback-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #222;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    font-size: 0.9rem;
+}
+
+#playbackProgress {
+    flex: 1;
+    margin: 0 10px;
+    appearance: none;
+    height: 5px;
+    background: #444;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+}
+
+#playbackProgress::-webkit-slider-thumb {
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    background: #FFF;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#playbackProgress::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    background: #FFF;
+    border-radius: 50%;
+    cursor: pointer;
 }
 
 /* Mobile optimization */

@@ -1,28 +1,109 @@
 // Object to hold audio elements for each sound
 var sounds = {};
 
-// Select all sound buttons and add click event listeners
+// Preload all sounds to reduce playback delay
+function preloadSounds() {
+    const soundBoard = document.getElementById('soundBoard');
+    const buttons = soundBoard.querySelectorAll('.sound-button');
+    buttons.forEach(button => {
+        const soundName = button.getAttribute('data-sound');
+        if (!sounds[soundName]) {
+            const audio = new Audio(`sounds/${soundName}.mp3`);
+            audio.preload = 'auto'; // Preload the audio file
+            audio.onerror = () => console.error(`Error preloading sound: ${soundName}.mp3`);
+            sounds[soundName] = audio;
+        }
+    });
+}
+
+let currentAudio = null; // Track the currently playing audio
+
+// Play sound with toggle functionality and update playback bar
 document.querySelectorAll('.sound-button').forEach(button => {
     button.addEventListener('click', function () {
-        var soundName = this.getAttribute('data-sound');
+        const soundName = this.getAttribute('data-sound');
+        const playbackBar = document.getElementById('playbackBar');
+        const playbackProgress = document.getElementById('playbackProgress');
+        const currentTrackName = document.getElementById('currentTrackName');
+        const currentTime = document.getElementById('currentTime');
+        const totalTime = document.getElementById('totalTime');
 
-        // If the audio for this sound doesn't exist, create it
+        // Ensure the sound is preloaded
         if (!sounds[soundName]) {
-            sounds[soundName] = new Audio('sounds/' + soundName + '.mp3');
-            sounds[soundName].onerror = function () {
-                console.error('Error loading sound: ' + soundName + '.mp3');
-            };
+            console.error(`Sound not preloaded: ${soundName}`);
+            return;
         }
 
-        // If the sound is paused or has ended, play it from the start
-        if (sounds[soundName].paused || sounds[soundName].ended) {
-            sounds[soundName].play();
-            this.classList.add('active');
-        } else {
-            // If the sound is playing, pause it and reset to the beginning
-            sounds[soundName].pause();
-            sounds[soundName].currentTime = 0;
-            this.classList.remove('active');
+        const audio = sounds[soundName];
+
+        // If the same audio is playing, stop it
+        if (currentAudio === audio && !audio.paused) {
+            audio.pause();
+            audio.currentTime = 0; // Reset to the start
+            playbackBar.style.display = 'none'; // Hide playback bar
+            currentAudio = null;
+            return;
+        }
+
+        // Stop any currently playing audio
+        if (currentAudio && currentAudio !== audio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+        }
+
+        // Play the selected audio
+        currentAudio = audio;
+        audio.currentTime = 0;
+        audio.play().catch(err => console.error(`Error playing sound: ${soundName}`, err));
+
+        // Update playback bar
+        playbackBar.style.display = 'flex';
+        currentTrackName.textContent = soundName;
+        totalTime.textContent = formatTime(audio.duration);
+
+        // Update progress and time as the audio plays
+        audio.ontimeupdate = () => {
+            playbackProgress.value = (audio.currentTime / audio.duration) * 100 || 0;
+            currentTime.textContent = formatTime(audio.currentTime);
+        };
+
+        // Hide playback bar when the audio ends
+        audio.onended = () => {
+            playbackBar.style.display = 'none';
+            currentAudio = null;
+        };
+    });
+});
+
+// Allow seeking using the playback bar slider
+document.getElementById('playbackProgress').addEventListener('input', function () {
+    if (currentAudio && currentAudio.duration) {
+        currentAudio.currentTime = (this.value / 100) * currentAudio.duration;
+    }
+});
+
+// Utility function to format time in mm:ss
+function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+}
+
+// Add functionality to allow seeking using the slider
+document.querySelectorAll('.audio-slider').forEach(slider => {
+    slider.addEventListener('input', function () {
+        const button = this.previousElementSibling; // Get the associated button
+        const soundName = button.getAttribute('data-sound');
+
+        // Ensure the sound is preloaded
+        if (!sounds[soundName]) {
+            console.error(`Sound not preloaded: ${soundName}`);
+            return;
+        }
+
+        const audio = sounds[soundName];
+        if (audio.duration) {
+            audio.currentTime = (this.value / 100) * audio.duration; // Seek to the selected position
         }
     });
 });
@@ -255,11 +336,34 @@ function initializeSoundBoard() {
     updateRowColors();
 }
 
+// Function to update colors based on position
+function updateButtonColors() {
+    const colors = [
+        'color-1', 'color-2', 'color-3', 'color-4', 
+        'color-5', 'color-6', 'color-7', 'color-8'
+    ];
+    document.querySelectorAll('.sound-button').forEach((button, index) => {
+        const colorIndex = Math.floor(index / 12) % colors.length;
+        button.className = `sound-button ${colors[colorIndex]}`;
+    });
+}
+
+// Add color update after drag operations
+document.querySelectorAll('.sound-button').forEach(button => {
+    button.addEventListener('dragend', () => {
+        setTimeout(() => {
+            updateButtonColors();
+            saveLayout();
+        }, 100);
+    });
+});
+
 // Update the initialization to handle new sounds
 document.addEventListener('DOMContentLoaded', () => {
+    preloadSounds(); // Preload all sounds
     loadLayout();
-    initializeSoundBoard();
-    updateRowColors();
+    updateButtonColors(); // Update colors on load
+    attachDragAndDropListeners();
     
     // Verify all sound files are loaded
     const requiredSounds = [
